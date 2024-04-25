@@ -79,7 +79,7 @@ function primary(ts){
         case '-': return 0-primary(ts);
         case NUMBER: return t.val;
         default:
-		error("primary expected");
+            return displayBuffer = "0".split('');   
     }
 }
 
@@ -97,7 +97,7 @@ function term(ts){
                 break;
             case'/':
                 let d = primary(ts);
-                if(d==0) displayBuffer.textContent = "Divide by zero";
+                if(d==0) return displayBuffer.textContent = "Divide by zero";
                 left /= d;
                 t = ts.get();
                 break;
@@ -148,11 +148,9 @@ calcButtons.forEach(button => {
 
 function updateDisplayBuffer(button) {
     switch(button.className){
-        case'N':case'O': { // numeric
+        case'N':case'O':
             displayBuffer.push(button.value);
             break;
-        }
-
         case'=':
             let ts = new Token_stream();
             calculate(ts);
@@ -162,9 +160,10 @@ function updateDisplayBuffer(button) {
             break;
         case'AC':
             clearDisplayBuffer();
-
+            break;
         }
     calcDisplay.textContent=displayBuffer.join('');
+    if(button.className == '=') clearDisplayBuffer(); 
 }
 
 function clearDisplayBuffer() {

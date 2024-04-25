@@ -1,33 +1,172 @@
-function add(a,b) {
-    return a+b;
-}
+const NUMBER = '8';
+const PRINT = '=';
 
-function subtract(a,b){
-    return a-b;
-}
 
-function multiply(a,b){
-    return a*b;
-}
-
-function divide(a,b){
-    return a/b;
-}
-
-const TOKEN_DIV = '/';
-const TOKEN_MUL = '*';
-const TOKEN_ADD = '+';
-const TOKEN_SUB = '-';
-
-function operate(a,b,operator) {
-    switch(operator){
-        case TOKEN_DIV: return divide(a,b);
-        case TOKEN_MUL: return multiply(a,b);
-        case TOKEN_SUB: return subtract(a,b); 
-        case TOKEN_ADD: return add(a,b);
+class Token{
+    constructor(kind, val = 0){
+        this.kind = kind;
+        this.val = val;
     }
 }
 
+class Token_stream{
+    constructor(){
+        this.full=false;
+        this.bufferToken=null;
+    }
+    ignore(char) {
+        if(this.full && this.bufferToken == char.kind) return this.full=false;
+        this.full=false;
+
+        let nextChar = 0;
+        while(nextChar = displayBuffer.pop() && nextChar!=undefined){
+            if(nextChar == char) return;
+        }
+    }
+
+    unget(token) {
+        this.full = true;
+        this.bufferToken = token;
+    }
+
+    get() {
+        if(this.full) {this.full = false; return this.bufferToken;}
+
+        let char = displayBuffer.pop();
+
+
+        switch(char){
+
+            case PRINT:
+            case '(':
+            case ')':
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+                return new Token(char);
+
+            case '.': // numbers
+            case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9':
+                {
+                    while(true) {
+                        let nextChar = displayBuffer.pop();
+                        if (nextChar === '.' || !isNaN(parseInt(nextChar))) char += nextChar;
+                        else {
+                            displayBuffer.push(nextChar); // Put back the non-numeric character
+                            break;
+                        }
+                    }
+                    return new Token(NUMBER, parseFloat(char))
+                }
+            default:
+                return new Token(PRINT);
+
+        }
+    }
+}
+
+
+//------------------------------------------------------
+
+function primary(ts){
+    let t = ts.get();
+    console.log(t);
+    if(typeof t === 'undefined') return;
+    switch(t.kind){
+        case '-': return 0-primary(ts);
+        case NUMBER: return t.val;
+        default:
+		error("primary expected");
+    }
+}
+
+function term(ts){
+    
+    let left = primary(ts);
+    let t = ts.get();
+    
+    console.log(t);
+    while(true) {
+        switch(t.kind) {
+            case'*':
+                left *= primary(ts);
+                t = ts.get();
+                break;
+            case'/':
+                let d = primary(ts);
+                if(d==0) displayBuffer.textContent = "Divide by zero";
+                left /= d;
+                t = ts.get();
+                break;
+            default:
+                ts.unget(t);
+                return left;
+        }
+    }
+}
+
+function expression(ts){
+    let left = term(ts);
+    let t = ts.get();
+    console.log(t);
+    while(true) {
+        switch(t.kind) {
+            case'+':
+                left+=term(ts);
+                t=ts.get();
+                break;
+            case '-':
+                left-=term(ts);
+                t=ts.get();
+                break;
+            default:
+                ts.unget(t);
+                return left;
+        }
+    }
+}
+
+function calculate(ts) {
+    
+    displayBuffer.reverse();
+    result = expression(ts);
+    displayBuffer = result.toString().split('');
+}
+
+//------------------------------------------------------
+let displayBuffer = [];
+
 //----------------------------------------------------
-let operand1, operand2;
-let operator;
+const calcButtons = Array.from(document.querySelectorAll("button"));
+const calcDisplay = document.querySelector(".calc-display");
+calcButtons.forEach(button => {
+    button.addEventListener("click", () => updateDisplayBuffer(button))
+})
+
+function updateDisplayBuffer(button) {
+    switch(button.className){
+        case'N':case'O': { // numeric
+            displayBuffer.push(button.value);
+            break;
+        }
+
+        case'=':
+            let ts = new Token_stream();
+            calculate(ts);
+            break;
+        case'CE':
+            displayBuffer.pop();
+            break;
+        case'AC':
+            clearDisplayBuffer();
+
+        }
+    calcDisplay.textContent=displayBuffer.join('');
+}
+
+function clearDisplayBuffer() {
+    displayBuffer = [];
+}

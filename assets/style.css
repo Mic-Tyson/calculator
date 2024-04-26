@@ -1,20 +1,100 @@
-* {
-    outline: 2px solid red;
+
+:root {
+    --background-color: #222;
+    --button-background-color: #333; 
+    --button-text-color: #fff; 
+    --display-background-color: #444; 
+    --display-text-color: #fff;
+    --highlight-color: #302f2f;
+    --operator-highlight-color: #3d3d3d;
+    --operator-background-color: #444;
+    --special-button-background-color: #ff5733; 
+    --special-button-highlight-color: #fa461e; 
+}
+ 
+ *{
+    font-family: "lcd-digital" "Helvetica Neue", Arial, sans-serif;
+    font-size: larger;
+  }
+
+  body{
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--background-color);
+    
   }
 
 .calc-body{
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    height: 30vw;
-    width: 30vw;
+    height: 85vh;
+    width: 60vh;
+    margin:5vh;
     align-items: center;
     justify-content: space-around;
+    outline: 1px solid black;
+    background-color: var(--button-background-color);
+    border-radius: 2%;
+}
+
+.calc-display{
+    font-size: 140%;
+    display: flex;
+    width: 80%;
+    height: 20%;
+    flex-wrap: wrap;
+    word-break: break-all;
+    outline: 1px solid black;
+    justify-content: flex-end;
+    background-color: var(--display-background-color);
+    color: var(--display-text-color);
 }
 
 .calc-buttons{
+    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    width:90%;
+    height: 60%;    
+
+    justify-content: space-between;
+    align-items: space-around;
+    
+}
+
+button{
+    width: 25%;
+    border-radius: 10%;
+    background-color: var(--button-background-color);
+    color: var(--button-text-color);
+}
+
+button:hover{
+    background-color: var(--highlight-color);
 
 }
+
+.O{
+    background-color: var(--operator-background-color);
+}
+.O:hover{
+    background-color: var(--operator-highlight-color);
+}
+
+.AC, .CE{
+    width: 35%;
+}
+
+.PRINT {
+    width: 50%
+}
+
+.AC, .CE, .PRINT {
+    background-color: var(--special-button-background-color);
+}
+
+.AC:hover, .CE:hover, .PRINT:hover {
+    background-color: var(--special-button-highlight-color);
+}
+

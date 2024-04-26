@@ -73,7 +73,6 @@ class Token_stream{
 
 function primary(ts){
     let t = ts.get();
-    console.log(t);
     if(typeof t === 'undefined') return;
     switch(t.kind){
         case '-': return 0-primary(ts);
@@ -87,8 +86,6 @@ function term(ts){
     
     let left = primary(ts);
     let t = ts.get();
-    
-    console.log(t);
     while(true) {
         switch(t.kind) {
             case'*':
@@ -111,7 +108,6 @@ function term(ts){
 function expression(ts){
     let left = term(ts);
     let t = ts.get();
-    console.log(t);
     while(true) {
         switch(t.kind) {
             case'+':
@@ -151,7 +147,7 @@ function updateDisplayBuffer(button) {
         case'N':case'O':
             displayBuffer.push(button.value);
             break;
-        case'=':
+        case'PRINT':
             let ts = new Token_stream();
             calculate(ts);
             break;
